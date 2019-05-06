@@ -30,12 +30,6 @@ make_call_graph <- function(object, all, ...) {
 
 make_call_graph.character <- function(obj, all = FALSE) {
   path <- search()
-  ispkg <- grepl("^package:", obj)
-
-  if (!all(ispkg)) {
-    stop("make_call_graph handles only packages.")
-  }
-
   funs <- lapply(obj, get_functions)
   make_call_graph(unlist(funs, recursive = FALSE),
     all = all,
@@ -62,6 +56,7 @@ make_call_graph.list <- function(obj, all = FALSE, fun_names = names(obj),
   })
 
   pkgs <- unique(packages)
+  pkgs <- pkgs[!grepl("^\\.", pkgs)]
   pkg_deps <- sapply(pkgs, function(act_pkg) {
     intersect(get_dependencies(act_pkg), pkgs)
   })

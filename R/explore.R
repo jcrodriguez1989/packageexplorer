@@ -36,15 +36,18 @@ explore <- function(names, include_deps = FALSE, plot = TRUE) {
   }
 
   all_pkgs <- c(sep$pkgs, names(sep$funs))
+  envs <- all_pkgs[grepl("^\\.", all_pkgs)]
+  all_pkgs <- all_pkgs[!grepl("^\\.", all_pkgs)]
   if (include_deps) {
-    deps <- get_dependencies(c(sep$pkgs, names(sep$funs)))
+    deps <- get_dependencies(all_pkgs)
     all_pkgs <- c(deps, all_pkgs)
   }
 
   invisible(lapply(all_pkgs, library, character.only = TRUE))
-  all_pkgs <- unique(paste0("package:", all_pkgs))
+  if (length(all_pkgs) > 0)
+    all_pkgs <- unique(paste0("package:", all_pkgs))
 
-  graph <- make_call_graph(all_pkgs)
+  graph <- make_call_graph(union(all_pkgs, envs))
   graph <- filter_graph(graph, sep)
   if (plot)
     visNetwork(graph$nodes, graph$edges) %>%
