@@ -4,7 +4,7 @@
 \alias{explore}
 \title{Explore packages and functions interactively}
 \usage{
-explore(names, include_deps = FALSE)
+explore(names, include_deps = FALSE, plot = TRUE)
 }
 \arguments{
 \item{names}{Character names of the packages and functions to explore.
@@ -14,6 +14,13 @@ It is recommended to write package names as `"package:PKG_NAME"`.}
 
 \item{include_deps}{Logical if dependencies from other packages should be
 included. Dependencies stand for "Depends" and "Imports".}
+
+\item{plot}{logical indicating if graph should be plotted. It can take long
+time to render if it is too big.}
+}
+\value{
+the graph as list, with nodes and edges that can be directly used by
+  visNetwork library.
 }
 \description{
 Given package and function names interactively explore them in a graph.

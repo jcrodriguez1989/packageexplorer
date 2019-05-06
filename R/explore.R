@@ -7,7 +7,12 @@
 #'   written as `FUN_PKG::FUN_NAME`.
 #'   It is recommended to write package names as `"package:PKG_NAME"`.
 #' @param include_deps Logical if dependencies from other packages should be
-#' included. Dependencies stand for "Depends" and "Imports".
+#'   included. Dependencies stand for "Depends" and "Imports".
+#' @param plot logical indicating if graph should be plotted. It can take long
+#'   time to render if it is too big.
+#'
+#' @return the graph as list, with nodes and edges that can be directly used by
+#'   visNetwork library.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom visNetwork visNetwork visEdges visGroups visLegend visOptions
@@ -19,7 +24,7 @@
 #' }
 #'
 #' @export
-explore <- function(names, include_deps = FALSE) {
+explore <- function(names, include_deps = FALSE, plot = TRUE) {
   sep <- get_pkgs_and_funs(names)
   if (length(sep$pkgs) > 0) {
     cat("Going to explore packages:\n")
@@ -41,8 +46,12 @@ explore <- function(names, include_deps = FALSE) {
 
   graph <- make_call_graph(all_pkgs)
   graph <- filter_graph(graph, sep)
-  visNetwork(graph$nodes, graph$edges) %>%
-    visEdges(arrows = "to") %>%
-    visGroups() %>%
-    visOptions(selectedBy = "group", highlightNearest = TRUE)
+  if (plot)
+    visNetwork(graph$nodes, graph$edges) %>%
+      visEdges(arrows = "to") %>%
+      visGroups() %>%
+      visOptions(selectedBy = "group", highlightNearest = TRUE) %>%
+      print()
+
+  return(invisible(graph))
 }
